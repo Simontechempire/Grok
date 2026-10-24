@@ -1,20 +1,22 @@
-module.exports = {
-  botName: "Grok",
-  prefix: "!",
-  owner: ["2349166265317"],          // owner number without + or spaces
-  ownerName: "Grok Owner",
-  sessionName: "grok-session",
-  packname: "Grok Bot",
-  author: "Grok",
-  timezone: "Africa/Lagos",
+require("dotenv").config()
 
-  // Railway / server
+module.exports = {
+  botName: process.env.BOT_NAME || "Grok",
+  prefix: process.env.PREFIX || "!",
+  owner: [process.env.OWNER_NUMBER || "2349166265317"],
+  ownerName: process.env.OWNER_NAME || "Grok Owner",
+  sessionName: process.env.SESSION_NAME || "grok-session",
+  packname: process.env.PACKNAME || "Grok Bot",
+  author: process.env.AUTHOR || "Grok",
+  timezone: process.env.TIMEZONE || "Africa/Lagos",
+
+  // Server
   port: process.env.PORT || 3000,
 
   // Features
-  autoRead: true,
-  autoTyping: false,
-  antiCall: true,
+  autoRead: process.env.AUTO_READ === "true",
+  autoTyping: process.env.AUTO_TYPING === "true",
+  antiCall: process.env.ANTI_CALL !== "false",
 
   // Messages
   messages: {
@@ -27,4 +29,4 @@ module.exports = {
     adminOnly: "⛔ Admin only.",
     botAdmin: "⛔ I need to be admin to do that."
   }
-    }
+}
