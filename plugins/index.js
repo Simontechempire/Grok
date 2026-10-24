@@ -57,4 +57,4 @@ module.exports = async function (sock, m, settings) {
   } catch (err) {
     console.error("Handler error:", err)
   }
-}
+                                      }
