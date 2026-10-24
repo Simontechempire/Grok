@@ -82,16 +82,22 @@ async function startConnection() {
     }
   })
 
-  // Load plugins after connection is ready
+  // FIXED: Load plugins correctly - THIS WAS THE BUG
   sock.ev.on("messages.upsert", async ({ messages, type }) => {
     if (type !== "notify") return
     const m = messages[0]
     if (!m.message || m.key.fromMe) return
 
     try {
-      require("./plugins")(sock, m, settings)
+      const body = m.message.conversation || m.message.extendedTextMessage?.text || m.message.imageMessage?.caption || ""
+      if(!body) return
+      console.log(chalk.yellow(`[RECV] ${body.slice(0,50)}`))
+      
+      // FIX: point to the index.js handler, not the folder
+      const handler = require("./plugins/index.js")
+      await handler(sock, m, settings)
     } catch (err) {
-      console.error("Plugin error:", err)
+      console.error("Plugin error:", err.message)
     }
   })
 
@@ -99,7 +105,6 @@ async function startConnection() {
 }
 
 async function requestPairingCode(phoneNumber) {
-  // Sanitize number: only digits
   const number = phoneNumber.replace(/\D/g, "")
   if (!number || number.length < 10) {
     throw new Error("Invalid phone number. Include country code (e.g. 2349166265317)")
@@ -109,7 +114,6 @@ async function requestPairingCode(phoneNumber) {
     await startConnection()
   }
 
-  // Wait a bit for socket to be ready
   await new Promise(r => setTimeout(r, 2000))
 
   if (sock.authState.creds.registered) {
@@ -135,4 +139,4 @@ module.exports = {
   requestPairingCode,
   getSocket,
   getPairingCode
-}
+                     }
